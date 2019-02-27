@@ -1,0 +1,113 @@
+apiVersion: v1
+kind: Route
+metadata:
+  name: ${SERVICE_NAME}-route
+spec:
+  host: ${SERVICE_NAME}.apps.ocp-test.kasikornbank.com
+  port:
+    targetPort: service-port
+  tls:
+    termination: edge
+  to:
+    kind: Service
+    name: ${SERVICE_NAME}-service
+    weight: 100
+  wildcardPolicy: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ${SERVICE_NAME}-service
+spec:
+  ports:
+    - name: service-port
+      port: 8000
+      protocol: TCP
+      targetPort: apiservice-port
+  selector:
+    app_number: "698.01"
+    component: service-api
+    app: ${SERVICE_NAME}-dc
+    role: expose-backend
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ${SERVICE_NAME}-config
+data:
+  SERVICE_2_NAME: http://go-service2-service.devops-dev.svc:8100
+  PORT: ":8000"
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app_number: "698.01"
+    component: service-api
+    app: ${SERVICE_NAME}-dc
+    role: expose-backend
+  name: ${SERVICE_NAME}-dc
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app_number: "698.01"
+      component: service-api
+      app: ${SERVICE_NAME}-dc
+      role: expose-backend
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app_number: "698.01"
+        component: service-api
+        app: ${SERVICE_NAME}-dc
+        role: expose-backend
+    spec:
+      containers:
+        - env:
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: PORT
+                  name: ${SERVICE_NAME}-config
+            - name: SERVICE_2_NAME
+              valueFrom:
+                configMapKeyRef:
+                  key: SERVICE_2_NAME
+                  name: ${SERVICE_NAME}-config
+          envFrom:
+            - configMapRef:
+                name: ${SERVICE_NAME}-config
+          image: devops-69801-docker.artifactory.kasikornbank.com:8443/${ENV}/${SERVICE_NAME}:${DTAG_VERSION}
+          imagePullPolicy: Always
+          name: ${SERVICE_NAME}
+          ports:
+            - containerPort: 8000
+              name: apiservice-port
+              protocol: TCP
+          resources:
+            limits:
+              cpu: "1"
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 1
+            timeoutSeconds: 1
+            periodSeconds: 3
+            successThreshold: 1
+            failureThreshold: 3
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+        - name: devops-69801-pullimage
+      restartPolicy: Always
