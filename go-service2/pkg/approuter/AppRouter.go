@@ -2,7 +2,7 @@ package approuter
 
 import (
 	"github.com/gorilla/mux"
-	"go-devops-service2/pkg/controller"
+	"go-service2/pkg/controller"
 )
 
 func NewCreateAppRouter() *mux.Router {

@@ -3,7 +3,7 @@ package controller
 import (
 	"encoding/json"
 	"fmt"
-	"go-devops-service2/pkg/model"
+	"go-service2/pkg/model"
 	"net/http"
 )
 

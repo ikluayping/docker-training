@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/codegangsta/negroni"
-	"go-devops-service2/pkg/approuter"
+	"go-service2/pkg/approuter"
 	"log"
 	"net/http"
 	"os"
