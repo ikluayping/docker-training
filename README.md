@@ -11,9 +11,9 @@ go-service1 required environment parameter below for startup
 
 go-service2 required environment parameter below for startup
 > PORT :the default should be 0.0.0.0:8100 <br />
->and go-service2 required json file (within data_file folder) for validate user<br />
 
-container should map volume to container path /go/src/go-service2
+and go-service2 required json file (within data_file folder) for validate user<br />
+container must map volume to container path /go/src/go-service2
 
 ## Usage
 go-service1 request <br />
