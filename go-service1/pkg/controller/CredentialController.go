@@ -22,5 +22,6 @@ func PostLogin(w http.ResponseWriter, request *http.Request) {
 	}
 	respObj := service.LoginToService2(loginBean)
 	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(respObj)
 }
