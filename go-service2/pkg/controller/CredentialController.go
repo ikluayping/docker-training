@@ -29,7 +29,7 @@ func PostLogin(w http.ResponseWriter, request *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 
-	jsonvalid, err := os.Open("valid-user.json")
+	jsonvalid, err := os.Open("data_file/valid-user.json")
 	if err != nil {
 		log.Printf("Cannot open file name valid-user.json with error: %s", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
