@@ -24,7 +24,7 @@ func LoginToService2(bean *model.LoginBean) model.ResponseLogin {
 
 	service2name := os.Getenv("SERVICE_2_NAME")
 
-	req, err := http.NewRequest("POST", service2name+"/login", byteBuffer)
+	req, err := http.NewRequest("POST", "http://"+service2name+":8100/login", byteBuffer)
 	if err != nil {
 		fmt.Printf("Cannot new request %s", err.Error())
 	}
